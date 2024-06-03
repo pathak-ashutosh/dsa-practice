@@ -11,7 +11,7 @@ class Student:
         self.dob = dob
     
     def __repr__(self):
-        return f"{self.name} {self.dob}"
+        return f"({self.name} {self.dob})"
     
     def get_dob(self, name):
         """
@@ -84,9 +84,13 @@ def linear_probing(index, name, dob, students):
         if not students[i]:
             students[i] = Student(name, dob)
             print(f"Student inserted at {i}")
+            return students
     print("Cannot insert Student. List exhausted!")
     
 def insert(Student, students):
+    """
+    Inserts the given student to the list
+    """
     index = hash(Student.name)
     if collision(index, students):
         print("Performing Linear Probing:")
@@ -108,8 +112,7 @@ def main():
         student = Student(name, dob)
         insert(student, students)
     
-    print("Final Students list: ")
-    print(*students)
+    print("Final Students list: ", [*students])
 
 if __name__ == "__main__":
     main()
