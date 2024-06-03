@@ -1,5 +1,5 @@
 class Student:
-    def __init__(self, name, dob):
+    def __init__(self, name: str, dob: str):
         """
         Represents a Student.
         
@@ -11,9 +11,12 @@ class Student:
         self.dob = dob
     
     def __repr__(self):
+        """
+        String format of the object.
+        """
         return f"({self.name} {self.dob})"
     
-    def get_dob(self, name):
+    def get_dob(self, name: str):
         """
         Gets the date of birth of the student, given their name.
         
@@ -29,7 +32,7 @@ class Student:
         return f"{name} does not exist"
 
 
-def hash(name):
+def hash(name: str):
     """
     Hashing function that uses the name to calculate the index where it will be stored.
     
@@ -50,7 +53,7 @@ def hash(name):
     print(f"Calculated index for {name}: {index}")
     return index
 
-def collision(index, students):
+def collision(index: int, students: list):
     """
     Checks whether the index given by the hash function collides with another student.
     
@@ -66,9 +69,9 @@ def collision(index, students):
         return True
     return False
 
-def linear_probing(index, name, dob, students):
+def linear_probing(index: int, name: str, dob: str, students: list):
     """
-    Applies linear probing (keep checking for the next available place for the student in the list until found)
+    Applies linear probing (keeps checking for the next available place in the list until found)
     
     Params:
     index (int): index returned by the hash function
@@ -87,9 +90,15 @@ def linear_probing(index, name, dob, students):
             return students
     print("Cannot insert Student. List exhausted!")
     
-def insert(Student, students):
+def insert(Student: Student, students: list):
     """
     Inserts the given student to the list
+    
+    Params:
+    student_name (string): name of the student to find
+    students (list): the list of students
+    
+    Does not return.
     """
     index = hash(Student.name)
     if collision(index, students):
@@ -99,20 +108,59 @@ def insert(Student, students):
         students[index] = Student
         print(f"No collisions, Student inserted at {index}")
 
-def main():
-    # list size is set so that not more than 70% of it is filled when all elements are placed in it to avoid overflow
-    LIST_SIZE = 10
-    students = [None] * LIST_SIZE
+def initialize_list(students: list, student_names: list, student_dobs: list):
+    """
+    Initializes the entire list with the given students
     
+    Params:
+    students (list -> Student): list of Students
+    student_names (list -> string): list of student names
+    student_dobs (list -> string): list of students' dates of birth
+    """
+    # insert students into the list
+    for name, dob in zip(student_names, student_dobs):
+        student = Student(name, dob)
+        insert(student, students)
+        
+    return students
+
+def find_student(student_name: str, students: list):
+    """
+    Finds the student in the list by thier name.
+    
+    Params:
+    student_name (string): name of the student to find
+    students (list): the list of students
+    
+    Returns:
+    student (Student): the Student object of the student_name, if found
+    """
+    index = hash(student_name)
+    print(f"\nFinding {student_name}:")
+    print(f"Calculated index: {index}")
+    # perform linear probing
+    for i in range(index, len(students) - 1):
+        print(f"Checking index {i}...")
+        if students[i]:
+            if students[i].name == student_name:
+                print(f"Student found at {i}: {students[i]}")
+                return students
+    print(f"Cannot find {student_name}. List exhausted!")
+
+
+def main():
     # example data
     student_names = ['Ada', 'Mike', 'Leo', 'Stan', 'Rob', 'Rick']
     student_dobs = ['12/05/2008', '11/28/2001', '07/09/2004', '02/30/2002', '04/10/2008', '01/01/2000']
     
-    for name, dob in zip(student_names, student_dobs):
-        student = Student(name, dob)
-        insert(student, students)
-    
+    # list size is set so that not more than 70% of it is filled when all elements are placed in it to avoid overflow
+    LIST_SIZE = 10
+    students = [None] * LIST_SIZE
+    students = initialize_list(students, student_names, student_dobs)
     print("Final Students list: ", [*students])
+    
+    # find a student by their name
+    find_student(student_names[3], students)
 
 if __name__ == "__main__":
     main()
